@@ -1,0 +1,17 @@
+<h3 style="padding-left: 15px;">Add article</h3>
+
+<div style="padding: 15px;">
+    <form [formGroup]="addArticleForm" (ngSubmit)="onSubmit()">   
+        <div>
+            <label for="name">Title</label>
+            <input id="title" type="text" formControlName="title">
+        </div>
+
+        <div>
+            <label for="address">Content</label>
+            <input id="content" type="text" formControlName="content">
+        </div>
+
+        <button class="button" type="submit">Add</button>
+    </form>
+</div>
