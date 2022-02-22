@@ -10,6 +10,12 @@ import { ArticleComponent } from './list-article/article/article.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AddArticleComponent } from './list-article/add-article/add-article.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { StoreModule } from '@ngrx/store';
+import { articlesReducer} from './state/article.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { ArticleEffects } from './state/article.effect';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -25,7 +31,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    StoreModule.forRoot({articles: articlesReducer}),
+    EffectsModule.forRoot([ArticleEffects]),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
   
   ],
   providers: [],

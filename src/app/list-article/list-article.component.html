@@ -1,6 +1,6 @@
 <div style="padding: 15px;">
     <ul>
-        <li *ngFor="let article of articleList">
+        <li *ngFor="let article of $articles | async">
             {{article.id}}.
             <a style="margin: 5px;" [routerLink]="['/articles', article.id]">
                 {{article.title}}

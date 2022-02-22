@@ -1,39 +1,30 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Article } from '../entity/article';
 import { ArticlesService } from '../services/get-articles.service';
+import { Store } from '@ngrx/store';
+import { selectAllArticles, selectArticles } from '../state/article.selector';
+import { fetchArticles, fetchArticlesSuccess, removeArticle } from '../state/article.actions';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-list-article',
   templateUrl: './list-article.component.html',
   styleUrls: ['./list-article.component.scss']
 })
-export class ListArticleComponent implements OnInit, OnDestroy {
+export class ListArticleComponent implements OnInit {
 
-  articleList: Article[] = [];
-  article!: Article;
+  $articles = this.store.select(selectArticles);
   
-  constructor(private fetchData: ArticlesService) { }
-
+  constructor(private store: Store) { }
+  
   ngOnInit(): void {
-    this.fetchData.getArticles().subscribe(resp =>{
-      this.articleList = resp;
-      
-    });
-    this.fetchData.newArticle.subscribe((article: Article) =>{
-      console.log("New article in list",this.articleList);
-      this.articleList.push(article)
-    });
+    this.store.select(selectArticles).subscribe(articleList =>{
+      if(articleList.length === 0) this.store.dispatch(fetchArticles());
+    })
   }
 
   deleteArticle(articleId: number){
-    this.fetchData.removeArticle(articleId).subscribe(resp =>{
-      this.articleList.find((item,index) => item.id === articleId ? this.articleList.splice(index,1) : '');
-    });
-    console.log("Updated list", this.articleList)      
-  }
-
-  ngOnDestroy(): void{
-    // this.fetchData.newArticle.unsubscribe();
+    this.store.dispatch(removeArticle({articleId}))   
   }
   
 }

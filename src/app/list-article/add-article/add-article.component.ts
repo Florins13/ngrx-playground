@@ -1,7 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs';
 import { Article } from 'src/app/entity/article';
 import { ArticlesService } from 'src/app/services/get-articles.service';
+import { addArticle } from 'src/app/state/article.actions';
+import { selectArticles } from 'src/app/state/article.selector';
 
 @Component({
   selector: 'app-add-article',
@@ -10,26 +14,23 @@ import { ArticlesService } from 'src/app/services/get-articles.service';
 })
 export class AddArticleComponent implements OnInit {
 
-  articleList: Article[] = [];
+  $articles = this.store.select(selectArticles);
 
-  
   addArticleForm = this.formBuilder.group({
     title: '',
     content: ''
   });
 
-  constructor(private formBuilder: FormBuilder, private fetchData: ArticlesService) { }
+  constructor(private formBuilder: FormBuilder, private fetchData: ArticlesService, private store: Store) { }
 
   ngOnInit(): void {
-    this.fetchData.getArticles().subscribe(resp =>{
-      this.articleList = resp;
-    });
   }
 
   onSubmit(): void{
-    this.fetchData.addArticle(this.addArticleForm.value.title,this.addArticleForm.value.content, 1).subscribe(resp=>{
-      console.log(resp);
-      this.fetchData.emitNewArticle(resp);
+    this.fetchData.addArticle(
+      this.addArticleForm.value.title,
+      this.addArticleForm.value.content, 101).subscribe(article=>{
+      this.store.dispatch(addArticle({ article }));
     })
   }
 

@@ -2,6 +2,9 @@ import { EventEmitter, Injectable, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Article } from '../entity/article';
 
+import { of, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,13 +15,10 @@ export class ArticlesService {
   
   constructor(private http:HttpClient) { }
 
-  
-  emitNewArticle(newArticle: Article){
-    this.newArticle.emit(newArticle);
-  }
-
-  getArticles(){
-    return this.http.get<Article[]>(`${this.baseUrl}/posts`);
+  getArticles(): Observable<Array<Article>>{
+    return this.http.get<Article[]>(`${this.baseUrl}/posts`).pipe(
+      map((articles) => articles || [])
+    );
   }
 
   getArticle(id:number){
